@@ -21,4 +21,12 @@ urlpatterns = [
     
     path("groups/<str:group_id>/subjects/", views.subjects_view, name="subjects"),    
     path("groups/<str:group_id>/subjects/<str:subject_id>", views.subject_view, name="subject"),    
+
+    path("groups/<str:group_id>/subjects/<str:subject_id>/topics/add", views.add_topic_view, name="add_topic"),    
+    path("groups/<str:group_id>/subjects/<str:subject_id>/topics/update/<str:topic_id>", views.update_topic_view, name="update_topic"),    
+    path("groups/<str:group_id>/subjects/<str:subject_id>/topics/delete/<str:topic_id>", views.delete_topic_view, name="delete_topic"),    
+
+    path("groups/<str:group_id>/subjects/<str:subject_id>/topics/", views.topics_view, name="topics"),    
+    path("groups/<str:group_id>/subjects/<str:subject_id>/topics/<str:topic_id>", views.topic_view, name="topic"),    
+
 ]

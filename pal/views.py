@@ -2,7 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Group, Subject
+from django.urls import reverse
+from .models import Group, Subject, Topic
 
 # Create your views here.
 def home_view(request):
@@ -101,8 +102,7 @@ def add_group_view(request):
                 currently_active=currently_active,
                 associated_with=request.user,
             )
-            previous_page = request.GET.get('next', '/')
-            return redirect(previous_page)
+            return redirect("home")
 
         else:
             error = "Please Donot Leave Name Empty!"
@@ -136,8 +136,7 @@ def update_group_view(request, group_id):
             group.currently_active = currently_active
             group.save()
 
-            previous_page = request.GET.get('next', '/')
-            return redirect(previous_page)
+            return redirect("home")
 
         else: 
             error = "Please Donot Leave Name Empty!"
@@ -161,8 +160,7 @@ def delete_group_view(request, group_id):
     if request.method == "POST":
         group.delete()
 
-        previous_page = request.GET.get('next', '/')
-        return redirect(previous_page)
+        return redirect("home")
 
     context = {"item_category": item_category, "item": item}
     return render(request, "delete.html", context)
@@ -178,7 +176,8 @@ def subjects_view(request, group_id):
 def subject_view(request, group_id, subject_id):
     subject = Subject.objects.get(id=subject_id)
     subject_single_view = True
-    context = {"subject": subject, "subject_single_view": subject_single_view}
+    topics = Topic.objects.filter(associated_subject=subject)
+    context = {"subject": subject, "subject_single_view": subject_single_view, "topics": topics}
     return render(request, "subject/subject.html", context)    
 
 @login_required(login_url="login")
@@ -197,8 +196,9 @@ def add_subject_view(request, group_id):
                 name=name,
                 associated_group=associated_group
             )
-            previous_page = request.GET.get('next', '/')
-            return redirect(previous_page)
+
+            redirect_url = reverse('group', kwargs={'group_id': group_id})    
+            return redirect(redirect_url)
 
         else:
             error = "Please Donot Leave Name Empty!"
@@ -225,8 +225,8 @@ def update_subject_view(request, group_id, subject_id):
             subject.name = name
             subject.save()
 
-            previous_page = request.GET.get('next', '/')
-            return redirect(previous_page)
+            redirect_url = reverse('group', kwargs={'group_id': group_id})    
+            return redirect(redirect_url)
 
         else: 
             error = "Please Donot Leave Name Empty!"
@@ -240,15 +240,100 @@ def delete_subject_view(request, group_id, subject_id):
     group = Group.objects.get(id=group_id)
     subject = Subject.objects.get(id=subject_id)
 
-    item_category = f"Topic Of Group {group.name.title()}"
+    item_category = f"Subject Of Group {group.name.title()}"
 
     item = subject.name.title()
 
     if request.method == "POST":
         subject.delete()
+        redirect_url = reverse('group', kwargs={'group_id': group_id})    
+        return redirect(redirect_url)
 
-        previous_page = request.GET.get('next', '/')
-        return redirect(previous_page)
+    context = {"item_category": item_category, "item": item}
+    return render(request, "delete.html", context)
+
+@login_required(login_url="login")
+def topics_view(request, group_id, subject_id):
+    subject = Subject.objects.get(id=subject_id)
+    topics = Topic.objects.filter(associated_subject=subject)
+    context = {"topics": topics}
+    return render(request, "topic/topics.html", context)
+
+@login_required(login_url="login")
+def topic_view(request, group_id, subject_id, topic_id):
+    topic = Topic.objects.get(id=topic_id)
+    topic_single_view = True
+    context = {"topic": topic, "topic_single_view": topic_single_view}
+    return render(request, "topic/topic.html", context)    
+
+@login_required(login_url="login")
+def add_topic_view(request, group_id, subject_id):
+    form_action = "Add"
+    error = ""
+
+    associated_subject = Subject.objects.get(id=subject_id)
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+
+        if name is not None:
+
+            topic = Topic.objects.create(
+                name=name,
+                associated_subject=associated_subject
+            )
+
+            redirect_url = reverse('subject', kwargs={"group_id": group_id, 'subject_id': subject_id})    
+            return redirect(redirect_url)
+
+        else:
+            error = "Please Donot Leave Name Empty!"
+
+    context = {"form_action": form_action, "error": error, "associated_subject": associated_subject}
+    return render(request, "topic/topic_form.html", context)
+
+@login_required(login_url="login")
+def update_topic_view(request, group_id, subject_id, topic_id):
+    form_action = "Update"
+    error = ""
+
+    associated_subject = Subject.objects.get(id=subject_id)
+    topic = Topic.objects.get(id=topic_id)
+
+    name = topic.name
+
+    if request.method == "POST":
+
+        if name is not None:
+
+            name = request.POST.get("name")
+
+            topic.name = name
+            topic.save()
+
+            redirect_url = reverse('subject', kwargs={"group_id": group_id, 'subject_id': subject_id})    
+            return redirect(redirect_url)
+
+        else: 
+            error = "Please Donot Leave Name Empty!"
+
+    context = {"form_action": form_action, "error": error, "name": name, "associated_subject": associated_subject}
+    return render(request, "topic/topic_form.html", context)
+
+@login_required(login_url="login")
+def delete_topic_view(request, group_id, subject_id, topic_id):
+    
+    subject = Subject.objects.get(id=subject_id)
+    topic = Topic.objects.get(id=topic_id)
+
+    item_category = f"Topic Of Subject {subject.name.title()}"
+
+    item = topic.name.title()
+
+    if request.method == "POST":
+        topic.delete()
+        redirect_url = reverse('subject', kwargs={"group_id": group_id, 'subject_id': subject_id})    
+        return redirect(redirect_url)
 
     context = {"item_category": item_category, "item": item}
     return render(request, "delete.html", context)

@@ -10,7 +10,9 @@
 		<div class="subjects_section">
 			<hr />
 			<div class="text-end">
-				<a href="{% url 'add_subject' subject.associated_group.id %}">
+				<a
+					href="{% url 'add_topic' subject.associated_group.id subject.id %}"
+				>
 					<button
 						class="rounded-3 border-0 fs-5 py-1 px-1 mx-1 form_submit_button"
 					>
@@ -22,6 +24,7 @@
 			<p class="fs-2 px-2">
 				There Are No Topics To Be Covered Within This Subject!
 			</p>
+			{% else %} {% include "topic/topics_component.html" %} <br />
 			{% endif %}
 			<hr />
 		</div>

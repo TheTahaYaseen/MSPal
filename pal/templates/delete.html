@@ -8,6 +8,7 @@
 	</div>
 	<div class="px-4 pb-3">
 		<form method="POST">
+			{% csrf_token %}
 			<button
 				class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
 				type="submit"

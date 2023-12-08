@@ -1,13 +1,14 @@
+import datetime
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.urls import reverse
-from .models import Group, Subject, Topic
+from .models import Group, Subject, Topic, TopicRevision
 
 # Create your views here.
 def home_view(request):
-    groups = Group.objects.all()
+    groups = Group.objects.filter(associated_with=request.user)
     context = {"groups": groups}
     return render(request, "home.html", context)
 
@@ -69,7 +70,7 @@ def logout_view(request):
 
 @login_required(login_url="login")
 def groups_view(request):
-    groups = Group.objects.all()
+    groups = Group.objects.filter(associated_with=request.user)
     context = {"groups": groups}
     return render(request, "group/groups.html", context)
 
@@ -197,7 +198,7 @@ def add_subject_view(request, group_id):
                 associated_group=associated_group
             )
 
-            redirect_url = reverse('group', kwargs={'group_id': group_id})    
+            redirect_url = reverse("group", kwargs={"group_id": group_id})    
             return redirect(redirect_url)
 
         else:
@@ -225,7 +226,7 @@ def update_subject_view(request, group_id, subject_id):
             subject.name = name
             subject.save()
 
-            redirect_url = reverse('group', kwargs={'group_id': group_id})    
+            redirect_url = reverse("group", kwargs={"group_id": group_id})    
             return redirect(redirect_url)
 
         else: 
@@ -246,7 +247,7 @@ def delete_subject_view(request, group_id, subject_id):
 
     if request.method == "POST":
         subject.delete()
-        redirect_url = reverse('group', kwargs={'group_id': group_id})    
+        redirect_url = reverse("group", kwargs={"group_id": group_id})    
         return redirect(redirect_url)
 
     context = {"item_category": item_category, "item": item}
@@ -263,7 +264,8 @@ def topics_view(request, group_id, subject_id):
 def topic_view(request, group_id, subject_id, topic_id):
     topic = Topic.objects.get(id=topic_id)
     topic_single_view = True
-    context = {"topic": topic, "topic_single_view": topic_single_view}
+    revisions = TopicRevision.objects.filter(associated_topic=topic)
+    context = {"topic": topic, "topic_single_view": topic_single_view, "revisions": revisions}
     return render(request, "topic/topic.html", context)    
 
 @login_required(login_url="login")
@@ -283,7 +285,7 @@ def add_topic_view(request, group_id, subject_id):
                 associated_subject=associated_subject
             )
 
-            redirect_url = reverse('subject', kwargs={"group_id": group_id, 'subject_id': subject_id})    
+            redirect_url = reverse("subject", kwargs={"group_id": group_id, "subject_id": subject_id})    
             return redirect(redirect_url)
 
         else:
@@ -311,7 +313,7 @@ def update_topic_view(request, group_id, subject_id, topic_id):
             topic.name = name
             topic.save()
 
-            redirect_url = reverse('subject', kwargs={"group_id": group_id, 'subject_id': subject_id})    
+            redirect_url = reverse("subject", kwargs={"group_id": group_id, "subject_id": subject_id})    
             return redirect(redirect_url)
 
         else: 
@@ -332,8 +334,20 @@ def delete_topic_view(request, group_id, subject_id, topic_id):
 
     if request.method == "POST":
         topic.delete()
-        redirect_url = reverse('subject', kwargs={"group_id": group_id, 'subject_id': subject_id})    
+        redirect_url = reverse("subject", kwargs={"group_id": group_id, "subject_id": subject_id})    
         return redirect(redirect_url)
 
     context = {"item_category": item_category, "item": item}
     return render(request, "delete.html", context)
+
+@login_required(login_url="login")
+def cover_topic_view(request, group_id, subject_id, topic_id):
+    
+    topic = Topic.objects.get(id=topic_id)
+
+    revision = TopicRevision.objects.create(
+        associated_topic = topic,
+    )
+
+    redirect_url = reverse("cover_topic", kwargs={"group_id": group_id, "subject_id": subject_id, "topic_id": topic_id})    
+    return redirect(redirect_url)

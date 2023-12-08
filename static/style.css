@@ -36,6 +36,10 @@ nav {
 	background-color: rgb(54, 54, 84, 0.2);
 }
 
+.revision_container {
+	background-color: rgb(54, 54, 84, 0.25);
+}
+
 .form_submit_button {
 	background-color: #363654;
 	color: white;

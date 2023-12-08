@@ -9,7 +9,7 @@
 		{% if topic_single_view %}
 		<div class="text-end">
 			<a
-				href="{% url 'add_topic' topic.associated_subject.associated_group.id topic.associated_subject.id %}"
+				href="{% url 'cover_topic' topic.associated_subject.associated_group.id topic.associated_subject.id topic.id %}"
 			>
 				<button
 					class="rounded-3 border-0 fs-5 py-1 px-1 mx-1 form_submit_button"
@@ -18,7 +18,16 @@
 				</button>
 			</a>
 		</div>
-		{% endif %}
+
+		<br />
+
+		{% for revision in revisions %}
+
+		<div class="mt-5 revision_container rounded-3 mx-auto mb-5 w-75">
+			<p class="fs-4">Revision On {{revision.date}}</p>
+		</div>
+
+		{% endfor %} {% endif %}
 		<div class="action_buttons">
 			{% if not topic_single_view %}
 			<a

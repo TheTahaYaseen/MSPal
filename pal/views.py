@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db.models import Subquery, OuterRef, Max
 from .models import Group, Subject, Topic, TopicRevision
 
 # Create your views here.
@@ -177,7 +178,13 @@ def subjects_view(request, group_id):
 def subject_view(request, group_id, subject_id):
     subject = Subject.objects.get(id=subject_id)
     subject_single_view = True
-    topics = Topic.objects.filter(associated_subject=subject)
+    topics = Topic.objects.annotate(
+        latest_revision_date = Subquery(
+            TopicRevision.objects.filter(
+                associated_topic=OuterRef("pk")
+            ).order_by("-date").values("date")[:1]
+        )
+    ).order_by("-latest_revision_date")
     context = {"subject": subject, "subject_single_view": subject_single_view, "topics": topics}
     return render(request, "subject/subject.html", context)    
 
@@ -256,7 +263,13 @@ def delete_subject_view(request, group_id, subject_id):
 @login_required(login_url="login")
 def topics_view(request, group_id, subject_id):
     subject = Subject.objects.get(id=subject_id)
-    topics = Topic.objects.filter(associated_subject=subject)
+    topics = Topic.objects.annotate(
+        latest_revision_date = Subquery(
+            TopicRevision.objects.filter(
+                associated_topic=OuterRef("pk")
+            ).order_by("-date").values("date")[:1]
+        )
+    ).order_by("-latest_revision_date")
     context = {"topics": topics}
     return render(request, "topic/topics.html", context)
 
@@ -264,8 +277,12 @@ def topics_view(request, group_id, subject_id):
 def topic_view(request, group_id, subject_id, topic_id):
     topic = Topic.objects.get(id=topic_id)
     topic_single_view = True
-    revisions = TopicRevision.objects.filter(associated_topic=topic)
-    context = {"topic": topic, "topic_single_view": topic_single_view, "revisions": revisions}
+    revisions = TopicRevision.objects.filter(associated_topic=topic).order_by("-date")
+    try:
+        last_revision = revisions[0]
+    except Exception:
+        last_revision = ""
+    context = {"topic": topic, "topic_single_view": topic_single_view, "revisions": revisions, "last_revision": last_revision}
     return render(request, "topic/topic.html", context)    
 
 @login_required(login_url="login")
@@ -349,5 +366,6 @@ def cover_topic_view(request, group_id, subject_id, topic_id):
         associated_topic = topic,
     )
 
-    redirect_url = reverse("cover_topic", kwargs={"group_id": group_id, "subject_id": subject_id, "topic_id": topic_id})    
+    redirect_url = reverse("topic", kwargs={"group_id": group_id, "subject_id": subject_id, "topic_id": topic_id})
     return redirect(redirect_url)
+

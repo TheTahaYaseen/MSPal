@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block content %}
+<div class="form_container p-3 mt-5 mx-5 rounded-3">
+	<h1 class="form_heading mr-auto fs-1">{{form_action}} Subject</h1>
+	<h3 class="form_heading mr-auto fs-3 px-4">
+		Of Group {{associated_group.name}}
+	</h3>
+	<p class="fs-5 mt-2 mb-0">{{error}}</p>
+	<form method="POST">
+		{% csrf_token %}
+		<input
+			class="rounded-pill border-0 fs-5 w-100 p-2 my-4"
+			type="text"
+			placeholder="Desired Name Here...."
+			name="name"
+			value="{{name}}"
+		/>
+		<button
+			class="rounded-pill border-0 fs-5 px-4 py-2 mb-3 form_submit_button"
+			type="submit"
+		>
+			{{form_action}}
+		</button>
+	</form>
+</div>
+{% endblock content %}

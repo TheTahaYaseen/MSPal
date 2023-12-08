@@ -1,0 +1,61 @@
+<div class="mt-5 subject_container rounded-3 mx-auto mb-5 w-75">
+	<div class="d-flex justify-content-between px-4 pt-3">
+		<span class="fs-3">{{subject.name}}</span>
+		{% if not group_single_view %}
+		<span class="fs-5"> {{subject.associated_group.name}} </span>
+		{% endif %}
+	</div>
+	<div class="px-4 pb-3">
+		{% if subject_single_view %}
+		<div class="subjects_section">
+			<hr />
+			<div class="text-end">
+				<a href="{% url 'add_subject' subject.associated_group.id %}">
+					<button
+						class="rounded-3 border-0 fs-5 py-1 px-1 mx-1 form_submit_button"
+					>
+						Add Topics
+					</button>
+				</a>
+			</div>
+			{% if not topics %}
+			<p class="fs-2 px-2">
+				There Are No Topics To Be Covered Within This Subject!
+			</p>
+			{% endif %}
+			<hr />
+		</div>
+		{% endif %}
+		<div class="action_buttons">
+			{% if not subject_single_view %}
+			<a
+				href="{% url 'subject' subject.associated_group.id subject.id %}"
+			>
+				<button
+					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				>
+					View
+				</button>
+			</a>
+			{% endif %}
+			<a
+				href="{% url 'update_subject' subject.associated_group.id subject.id %}"
+			>
+				<button
+					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				>
+					Update
+				</button>
+			</a>
+			<a
+				href="{% url 'delete_subject' subject.associated_group.id subject.id %}"
+			>
+				<button
+					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				>
+					Delete
+				</button>
+			</a>
+		</div>
+	</div>
+</div>

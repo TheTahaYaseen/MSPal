@@ -3,6 +3,7 @@
 """
 
 The Whole Purpose Of This App Is To Help / Assist Me To Prepare For My Studies / School Examination But Can Be Applied To A Broader Scope
+Just A Tool / Manager That Allows / Assists You To Study And Cover All Topics Of Either A Broader Subject / Scope For Just Learning And Can Be For Crucial Exams
 Hence The Name, MyStudyPal (MSPal)
 
 """

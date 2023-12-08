@@ -8,11 +8,17 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),    
 
-    path("groups/", views.groups_view, name="groups"),    
-    path("groups/<str:group_id>", views.group_view, name="group"),    
-
     path("groups/add", views.add_group_view, name="add_group"),    
     path("groups/update/<str:group_id>", views.update_group_view, name="update_group"),    
     path("groups/delete/<str:group_id>", views.delete_group_view, name="delete_group"),
+    
+    path("groups/", views.groups_view, name="groups"),    
+    path("groups/<str:group_id>", views.group_view, name="group"),    
 
+    path("groups/<str:group_id>/subjects/add", views.add_subject_view, name="add_subject"),    
+    path("groups/<str:group_id>/subjects/update/<str:subject_id>", views.update_subject_view, name="update_subject"),    
+    path("groups/<str:group_id>/subjects/delete/<str:subject_id>", views.delete_subject_view, name="delete_subject"),    
+    
+    path("groups/<str:group_id>/subjects/", views.subjects_view, name="subjects"),    
+    path("groups/<str:group_id>/subjects/<str:subject_id>", views.subject_view, name="subject"),    
 ]

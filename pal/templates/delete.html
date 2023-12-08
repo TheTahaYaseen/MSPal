@@ -1,20 +1,20 @@
 {% extends "layout.html" %} {% block content %}
-<div class="w-75 mt-5 holder_container rounded-3 mx-auto mb-5">
-  <div class="px-4 py-3">
-    <p class="fs-1">Delete</p>
-    <hr />
-    <p class="fs-2">{{item_category}}</p>
-    <p class="fs-3 px-3">Are You Sure You Want To Delete: {{item}}?</p>
-  </div>
-  <div class="px-4 pb-3">
-    <form method="POST">
-      <button
-        class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
-        type="submit"
-      >
-        Delete
-      </button>
-    </form>
-  </div>
+<div class="w-75 mt-5 form_container rounded-3 mx-auto mb-5">
+	<div class="px-4 py-3">
+		<p class="fs-1">Delete</p>
+		<hr />
+		<p class="fs-2">{{item_category}}</p>
+		<p class="fs-3 px-3">Are You Sure You Want To Delete: {{item}}?</p>
+	</div>
+	<div class="px-4 pb-3">
+		<form method="POST">
+			<button
+				class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				type="submit"
+			>
+				Delete
+			</button>
+		</form>
+	</div>
 </div>
 {% endblock content %}

@@ -2,13 +2,13 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Group
+from .models import Group, Subject
 
 # Create your views here.
 def home_view(request):
     groups = Group.objects.all()
     context = {"groups": groups}
-    return render(request, "groups.html", context)
+    return render(request, "home.html", context)
 
 def register_view(request):
     form_action = "Register"
@@ -70,13 +70,15 @@ def logout_view(request):
 def groups_view(request):
     groups = Group.objects.all()
     context = {"groups": groups}
-    return render(request, "groups.html", context)
+    return render(request, "group/groups.html", context)
 
 @login_required(login_url="login")
 def group_view(request, group_id):
     group = Group.objects.get(id=group_id)
-    context = {"group": group}
-    return render(request, "group.html", context)
+    group_single_view = True
+    subjects = Subject.objects.filter(associated_group=group)
+    context = {"group": group, "group_single_view": group_single_view, "subjects": subjects}
+    return render(request, "group/group.html", context)
 
 @login_required(login_url="login")
 def add_group_view(request):
@@ -87,20 +89,26 @@ def add_group_view(request):
         name = request.POST.get("name")
         currently_active = request.POST.get("currently_active")
 
-        if currently_active == "Yes":
-            currently_active = True
-        else:
-            currently_active = False
+        if name is not None:
 
-        group = Group.objects.create(
-            name=name,
-            currently_active=currently_active,
-            associated_with=request.user,
-        )
-        return redirect("home")
+            if currently_active == "Yes":
+                currently_active = True
+            else:
+                currently_active = False
+
+            group = Group.objects.create(
+                name=name,
+                currently_active=currently_active,
+                associated_with=request.user,
+            )
+            previous_page = request.GET.get('next', '/')
+            return redirect(previous_page)
+
+        else:
+            error = "Please Donot Leave Name Empty!"
 
     context = {"form_action": form_action, "error": error}
-    return render(request, "group_form.html", context)
+    return render(request, "group/group_form.html", context)
 
 @login_required(login_url="login")
 def update_group_view(request, group_id):
@@ -113,28 +121,34 @@ def update_group_view(request, group_id):
     currently_active = group.currently_active
 
     if request.method == "POST":
-        name = request.POST.get("name")
-        currently_active = request.POST.get("currently_active")
 
-        if currently_active == "Yes":
-            currently_active = True
-        else:
-            currently_active = False
+        if name is not None:
 
-        group.name = name
-        group.currently_active = currently_active
-        group.save()
+            name = request.POST.get("name")
+            currently_active = request.POST.get("currently_active")
 
-        return redirect("home")
+            if currently_active == "Yes":
+                currently_active = True
+            else:
+                currently_active = False
+
+            group.name = name
+            group.currently_active = currently_active
+            group.save()
+
+            previous_page = request.GET.get('next', '/')
+            return redirect(previous_page)
+
+        else: 
+            error = "Please Donot Leave Name Empty!"
 
     context = {"form_action": form_action, "error": error, "name": name, "currently_active": currently_active}
-    return render(request, "group_form.html", context)
+    return render(request, "group/group_form.html", context)
 
 @login_required(login_url="login")
 def delete_group_view(request, group_id):
     group = Group.objects.get(id=group_id)
 
-    name = group.name
     currently_active = group.currently_active
 
     if currently_active:
@@ -147,8 +161,94 @@ def delete_group_view(request, group_id):
     if request.method == "POST":
         group.delete()
 
-        return redirect("home")
+        previous_page = request.GET.get('next', '/')
+        return redirect(previous_page)
 
     context = {"item_category": item_category, "item": item}
     return render(request, "delete.html", context)
 
+@login_required(login_url="login")
+def subjects_view(request, group_id):
+    group = Group.objects.get(id=group_id)
+    subjects = Subject.objects.filter(associated_group=group)
+    context = {"subjects": subjects}
+    return render(request, "subject/subjects.html", context)
+
+@login_required(login_url="login")
+def subject_view(request, group_id, subject_id):
+    subject = Subject.objects.get(id=subject_id)
+    subject_single_view = True
+    context = {"subject": subject, "subject_single_view": subject_single_view}
+    return render(request, "subject/subject.html", context)    
+
+@login_required(login_url="login")
+def add_subject_view(request, group_id):
+    form_action = "Add"
+    error = ""
+
+    associated_group = Group.objects.get(id=group_id)
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+
+        if name is not None:
+
+            subject = Subject.objects.create(
+                name=name,
+                associated_group=associated_group
+            )
+            previous_page = request.GET.get('next', '/')
+            return redirect(previous_page)
+
+        else:
+            error = "Please Donot Leave Name Empty!"
+
+    context = {"form_action": form_action, "error": error, "associated_group": associated_group}
+    return render(request, "subject/subject_form.html", context)
+
+@login_required(login_url="login")
+def update_subject_view(request, group_id, subject_id):
+    form_action = "Update"
+    error = ""
+
+    associated_group = Group.objects.get(id=group_id)
+    subject = Subject.objects.get(id=subject_id)
+
+    name = subject.name
+
+    if request.method == "POST":
+
+        if name is not None:
+
+            name = request.POST.get("name")
+
+            subject.name = name
+            subject.save()
+
+            previous_page = request.GET.get('next', '/')
+            return redirect(previous_page)
+
+        else: 
+            error = "Please Donot Leave Name Empty!"
+
+    context = {"form_action": form_action, "error": error, "name": name, "associated_group": associated_group}
+    return render(request, "subject/subject_form.html", context)
+
+@login_required(login_url="login")
+def delete_subject_view(request, group_id, subject_id):
+    
+    group = Group.objects.get(id=group_id)
+    subject = Subject.objects.get(id=subject_id)
+
+    item_category = f"Topic Of Group {group.name.title()}"
+
+    item = subject.name.title()
+
+    if request.method == "POST":
+        subject.delete()
+
+        previous_page = request.GET.get('next', '/')
+        return redirect(previous_page)
+
+    context = {"item_category": item_category, "item": item}
+    return render(request, "delete.html", context)

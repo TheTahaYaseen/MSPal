@@ -1,0 +1,58 @@
+<div class="w-75 mt-5 group_container rounded-3 mx-auto mb-5">
+	<div class="d-flex justify-content-between px-4 pt-3">
+		<span class="fs-3">{{group.name}}</span>
+		{% if group.currently_active %}
+		<span class="fs-5"> * Active </span>
+		{% endif %}
+	</div>
+	<div class="px-4 pb-3">
+		{% if group_single_view %}
+		<div class="subjects_section">
+			<hr />
+			<div class="text-end">
+				<a href="{% url 'add_subject' group.id %}">
+					<button
+						class="rounded-3 border-0 fs-5 py-1 px-1 mx-1 form_submit_button"
+					>
+						Add Subject
+					</button>
+				</a>
+			</div>
+			{% if subjects %} {% include "subject/subjects_component.html" %}
+			<br />
+			{% else %}
+			<p class="fs-2 px-2">
+				There Are No Subjects To Study Within This Group!
+			</p>
+			{% endif %}
+
+			<hr />
+		</div>
+		{% endif %}
+		<div class="action_buttons">
+			{% if not group_single_view %}
+			<a href="{% url 'group' group.id %}">
+				<button
+					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				>
+					View
+				</button>
+			</a>
+			{% endif %}
+			<a href="{% url 'update_group' group.id %}">
+				<button
+					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				>
+					Update
+				</button>
+			</a>
+			<a href="{% url 'delete_group' group.id %}">
+				<button
+					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+				>
+					Delete
+				</button>
+			</a>
+		</div>
+	</div>
+</div>

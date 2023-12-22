@@ -1,4 +1,4 @@
-<div class="mt-5 topic_container rounded-3 mx-auto mb-5 w-75">
+<div class="mt-5 topic_container rounded-3 mx-auto mb-5 w-75 px-1">
 	<div class="d-flex justify-content-between px-1 pt-3">
 		<span class="fs-4">{{topic.name}}</span>
 		{% if not subject_single_view %}
@@ -34,7 +34,7 @@
 		</div>
 
 		{% endfor %} {% endif %}
-		<div class="action_buttons mt-5">
+		<div class="action_buttons">
 			{% if not topic_single_view %}
 			<a
 				href="{% url 'topic' topic.associated_subject.associated_group.id topic.associated_subject.id topic.id %}"

@@ -1,6 +1,6 @@
 <div class="mt-5 topic_container rounded-3 mx-auto mb-5 w-75">
-	<div class="d-flex justify-content-between px-4 pt-3">
-		<span class="fs-3">{{topic.name}}</span>
+	<div class="d-flex justify-content-between px-1 pt-3">
+		<span class="fs-4">{{topic.name}}</span>
 		{% if not subject_single_view %}
 		<span class="fs-5"> {{topic.associated_subject.name}} </span>
 		{% endif %}
@@ -11,7 +11,7 @@
 		<p class="fs-4">Last Revision On {{last_revision.date}}</p>
 	</div>
 	{% endif %}
-	<div class="px-4 pb-3">
+	<div class="px-1 pb-3">
 		{% if topic_single_view %}
 		<div class="text-end">
 			<a
@@ -29,18 +29,18 @@
 
 		{% for revision in revisions %}
 
-		<div class="mt-1 revision_container rounded-3 mx-auto mb-5 w-75 px-2">
+		<div class="mb-1 revision_container rounded-3 mx-auto w-75 px-2">
 			<p class="fs-4">Revision On {{revision.date}}</p>
 		</div>
 
 		{% endfor %} {% endif %}
-		<div class="action_buttons">
+		<div class="action_buttons mt-5">
 			{% if not topic_single_view %}
 			<a
 				href="{% url 'topic' topic.associated_subject.associated_group.id topic.associated_subject.id topic.id %}"
 			>
 				<button
-					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+					class="rounded-pill border-0 fs-5 px-4 py-1 mx-1 form_submit_button"
 				>
 					View
 				</button>
@@ -50,7 +50,7 @@
 				href="{% url 'update_topic' topic.associated_subject.associated_group.id topic.associated_subject.id topic.id %}"
 			>
 				<button
-					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+					class="rounded-pill border-0 fs-5 px-4 py-1 mx-1 form_submit_button"
 				>
 					Update
 				</button>
@@ -59,7 +59,7 @@
 				href="{% url 'delete_topic' topic.associated_subject.associated_group.id topic.associated_subject.id topic.id %}"
 			>
 				<button
-					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+					class="rounded-pill border-0 fs-5 px-4 py-1 mx-1 form_submit_button"
 				>
 					Delete
 				</button>

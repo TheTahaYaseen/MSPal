@@ -1,13 +1,14 @@
 import datetime
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db.models import Subquery, OuterRef, Max
 from .models import Group, Subject, Topic, TopicRevision
 
 # Create your views here.
+@login_required(login_url="login")
 def home_view(request):
     groups = Group.objects.filter(associated_with=request.user)
     context = {"groups": groups}

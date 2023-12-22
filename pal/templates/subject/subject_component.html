@@ -1,11 +1,11 @@
 <div class="mt-5 subject_container rounded-3 mx-auto mb-5 w-75">
-	<div class="d-flex justify-content-between px-4 pt-3">
-		<span class="fs-3">{{subject.name}}</span>
+	<div class="d-flex justify-content-between px-1 pt-3">
+		<span class="fs-4">{{subject.name}}</span>
 		{% if not group_single_view %}
-		<span class="fs-5"> {{subject.associated_group.name}} </span>
+		<span class="fs-6"> {{subject.associated_group.name}} </span>
 		{% endif %}
 	</div>
-	<div class="px-4 pb-3">
+	<div class="px-1 pb-3">
 		{% if subject_single_view %}
 		<div class="subjects_section">
 			<hr />
@@ -35,7 +35,7 @@
 				href="{% url 'subject' subject.associated_group.id subject.id %}"
 			>
 				<button
-					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+					class="rounded-pill border-0 fs-5 px-3 py-1 form_submit_button"
 				>
 					View
 				</button>
@@ -45,7 +45,7 @@
 				href="{% url 'update_subject' subject.associated_group.id subject.id %}"
 			>
 				<button
-					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+					class="rounded-pill border-0 fs-5 px-3 py-1 form_submit_button"
 				>
 					Update
 				</button>
@@ -54,7 +54,7 @@
 				href="{% url 'delete_subject' subject.associated_group.id subject.id %}"
 			>
 				<button
-					class="rounded-pill border-0 fs-5 px-5 py-1 mx-1 form_submit_button"
+					class="rounded-pill border-0 fs-5 px-3 py-1 form_submit_button"
 				>
 					Delete
 				</button>
